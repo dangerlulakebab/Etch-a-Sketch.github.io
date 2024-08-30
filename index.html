@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>etch-a-sketch</title>
+</head>
+
+<body>
+    <main>
+        <div class="grid-container">
+        
+        </div>
+        <div class="functions">
+            <button class="clear">Clear</button>
+            <button class="grid-size">grid-size</button>
+            <button class="border-btn">toggle-border</button>
+            <label>random colors
+                <input class="random-colors" type="checkbox">
+            </label>
+        </div>
+    </main>
+
+
+
+    <script>
+        let container = document.querySelector('.grid-container')
+        let clear = document.querySelector('.clear')
+        let grid_size = document.querySelector('.grid-size')
+        let borderBtn = document.querySelector('.border-btn')
+        let randomColorsCheckbox = document.querySelector('.random-colors')
+        let isMouseDown = false;
+        let isBorderOn = true;
+        let useRandomColors = false;
+        let num = 16;
+
+        function getRandomColors() {
+            const letter = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letter[Math.floor(Math.random() * 16)]
+            }
+          return color;
+        }
+
+        function createGrid(num){
+            container.innerHTML = '';
+            container.style.gridTemplateColumns = `repeat(${num}, 1fr)`
+            container.style.gridTemplateRows = `repeat(${num}, 1fr)`
+
+            for (let i = 0; i < num * num; i ++){
+            const grid_item = document.createElement('div');
+            grid_item.classList.add('grid-item')
+
+                grid_item.addEventListener('mouseenter', () => {
+                    if (isMouseDown) {
+                        grid_item.classList.add('hovered');
+                        if (useRandomColors) {
+                            grid_item.style.backgroundColor = getRandomColors();
+                        }
+                    }
+                });
+
+                grid_item.addEventListener('mousedown', () => {
+                    grid_item.classList.add('hovered');
+                    if (useRandomColors) {
+                            grid_item.style.backgroundColor = getRandomColors();
+                        }
+                });
+
+                container.appendChild(grid_item)
+            }
+        }
+
+        createGrid(num);
+
+        grid_size.addEventListener('click', () => {
+            newNum = prompt(`current grid-size: ${num} enter new grid size: (LIMIT 100) `)
+            if (newNum && !isNaN(newNum) && newNum <= 100){
+                num = parseInt(newNum)
+                createGrid(num)
+            }
+        })
+
+        document.body.addEventListener('mousedown', () => {
+            isMouseDown = true;
+        })
+
+        document.body.addEventListener('mouseup', () => {
+            isMouseDown = false
+        })
+
+        clear.addEventListener('click', () => {
+                let gridItems = document.querySelectorAll('.grid-item')
+                clear.addEventListener('click', () => {
+                    gridItems.forEach((item) => {
+                        item.classList.remove('hovered')
+                        item.style.backgroundColor = ''
+                    })
+                })
+            })
+        borderBtn.addEventListener('click', () => {
+            let gridItems = document.querySelectorAll('.grid-item');
+            isBorderOn = !isBorderOn;
+            gridItems.forEach((item) => {
+                if (isBorderOn) {
+                    item.style.border = '0.1px solid black'
+                }else {
+                    item.style.border = 'none'
+                }
+            })
+        })
+
+        randomColorsCheckbox.addEventListener('change', (event) => {
+            useRandomColors = event.target.checked;
+        })
+    </script>
+</body>
+</html>
